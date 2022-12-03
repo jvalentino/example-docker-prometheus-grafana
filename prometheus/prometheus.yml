@@ -1,0 +1,23 @@
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 5 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+
+scrape_configs:
+
+# 
+  - job_name: 'tle-monitor'
+    metrics_path: "/prometheus"
+    params:
+      max: [100]
+    scrape_interval: 120s
+    static_configs:
+      - targets: ['192.168.1.133:8081']
+    relabel_configs:
+    - source_labels: [__meta_dns_name, __address__]
+      target_label: instance
+      regex: tasks\.(.+);192\.168\.\d+\.(\d+):\d+
+      replacement: $1-$2
+    - source_labels: [__meta_dns_name]
+      target_label: service
+      regex: tasks\.(.+) 
